@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.heaven7.android.groceries.demo"
-        minSdkVersion 11
+        minSdkVersion 14
         targetSdkVersion 24
         versionCode 1
         versionName "1.0"
@@ -24,4 +24,11 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:24.2.1'
     compile 'com.android.support:design:24.2.1'
+    compile 'com.heaven7.core.util:savestate:1.0.1'
+    compile 'com.heaven7.core.util:util-v1:1.1.2'
+
+    compile 'com.heaven7.core.adapter:adapter:1.8.0'
+    compile 'com.heaven7.volley:volley_with_extra:1.0.1'
+    compile 'com.jakewharton:butterknife:6.1.0'  //最新版butter knife会自动生成代码
+   // compile 'com.heaven7.android.demolib:android-demo-lib:1.0'
 }
