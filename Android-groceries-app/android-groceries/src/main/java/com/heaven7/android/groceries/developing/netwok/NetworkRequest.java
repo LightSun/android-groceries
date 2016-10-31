@@ -1,6 +1,7 @@
 package com.heaven7.android.groceries.developing.netwok;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,6 +37,7 @@ public class NetworkRequest {
         private int cacheType;
         private NetworkResponse response;
         private boolean forceRefresh;
+        private Map<String,List<String>> mHeaderMap;
 
         public Builder method(@NetworkConstant.MethodType int method) {
             this.method = method;

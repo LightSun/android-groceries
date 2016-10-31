@@ -1,0 +1,105 @@
+package com.heaven7.android.groceries.demo.stickyLayout;
+
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
+
+import com.heaven7.android.groceries.demo.R;
+
+public class MainActivity extends FragmentActivity {
+	
+	private String[] mTitles = new String[] { "简介", "评价", "相关" };
+	private SimpleViewPagerIndicator mIndicator;
+	private ViewPager mViewPager;
+	private FragmentPagerAdapter mAdapter;
+	private TabFragment[] mFragments = new TabFragment[mTitles.length];
+
+	private StickyNavLayout mStickyNavLayout;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+
+		initViews();
+		initEvents();
+		initDatas();
+	}
+
+	private void initEvents() {
+		mViewPager.addOnPageChangeListener(new OnPageChangeListener() {
+			@Override
+			public void onPageSelected(int position) {
+				mStickyNavLayout.setStickyDelegate((StickyNavLayout.IStickyDelegate) mAdapter.getItem(mViewPager.getCurrentItem()));
+			}
+
+			/**
+			 * position : 中的position 
+			 * positionOffset: 当前页面偏移的百分比
+			 * positionOffsetPixels: 当前页面偏移的像素位置
+			 */
+			@Override
+			public void onPageScrolled(int position, float positionOffset,
+					int positionOffsetPixels) { // 会多次调用
+				mIndicator.scroll(position, positionOffset);
+			}
+			@Override
+			public void onPageScrollStateChanged(int state) {
+
+			}
+		});
+	}
+
+	private void initDatas() {
+		mIndicator.setTitles(mTitles);
+		for (int i = 0; i < mTitles.length; i++) {
+			mFragments[i] = (TabFragment) TabFragment.newInstance(mTitles[i]);
+		}
+		mAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
+			@Override
+			public int getCount() {
+				return mTitles.length;
+			}
+			@Override
+			public Fragment getItem(int position) {
+				return mFragments[position];
+			}
+		};
+		mViewPager.setAdapter(mAdapter);
+		mViewPager.setCurrentItem(0);
+		mStickyNavLayout.setStickyDelegate((StickyNavLayout.IStickyDelegate) mAdapter.getItem(mViewPager.getCurrentItem()));
+	}
+
+	private void initViews() {
+		mStickyNavLayout = (StickyNavLayout) findViewById(R.id.stickyLayout);
+		mIndicator = (SimpleViewPagerIndicator) findViewById(R.id.id_stickynavlayout_indicator);
+		mViewPager = (ViewPager) findViewById(R.id.id_stickynavlayout_viewpager);
+	}
+
+	public static int findFirstVisibleItemPosition(RecyclerView rv) {
+		RecyclerView.LayoutManager lm = rv.getLayoutManager();
+		int firstPos = RecyclerView.NO_POSITION ;
+		if (lm instanceof GridLayoutManager) {
+			firstPos = ((GridLayoutManager) lm).findFirstVisibleItemPosition();
+
+		} else if (lm instanceof LinearLayoutManager) {
+			firstPos = ((LinearLayoutManager) lm).findFirstVisibleItemPosition();
+
+		} else if (lm instanceof StaggeredGridLayoutManager) {
+			int positions[] =  ((StaggeredGridLayoutManager) lm).findFirstVisibleItemPositions(null);
+			for(int pos : positions){
+				if(pos < firstPos){
+					firstPos = pos;
+				}
+			}
+		}
+		return firstPos;
+	}
+}

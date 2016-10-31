@@ -6,7 +6,7 @@ import android.content.Context;
 /**
  * Created by heaven7 on 2016/10/25.
  */
-public  class AbstractManager {
+public class AbstractManager {
 
     private WorkContext mWorkContext;
 
