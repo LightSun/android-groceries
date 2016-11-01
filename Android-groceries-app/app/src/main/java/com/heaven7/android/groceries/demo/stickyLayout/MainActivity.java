@@ -1,6 +1,7 @@
 package com.heaven7.android.groceries.demo.stickyLayout;
 
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -10,6 +11,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.view.View;
 
 import com.heaven7.android.groceries.demo.R;
 
@@ -34,6 +36,12 @@ public class MainActivity extends FragmentActivity {
 	}
 
 	private void initEvents() {
+		findViewById(R.id.id_stickynavlayout_topview).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Snackbar.make(v, R.string.action_settings, Snackbar.LENGTH_LONG).show();
+			}
+		});
 		mViewPager.addOnPageChangeListener(new OnPageChangeListener() {
 			@Override
 			public void onPageSelected(int position) {

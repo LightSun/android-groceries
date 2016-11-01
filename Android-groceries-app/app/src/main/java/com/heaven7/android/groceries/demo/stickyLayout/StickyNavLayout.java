@@ -145,9 +145,6 @@ public class StickyNavLayout extends LinearLayout {
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 mLastY = y;
-                if(mNeedIntercept){
-                    return true;
-                }
                 //Logger.i(TAG, "onInterceptTouchEven", "top visible = " + 	mTop.getLocalVisibleRect(mExpectTopRect));
                 //mTop.getWindowVisibleDisplayFrame(mExpectTopRect);
                 //Logger.i(TAG, "onInterceptTouchEvent_getWindowVisibleDisplayFrame", "top: " + mExpectTopRect + ",top = " + getTop());
@@ -159,19 +156,19 @@ public class StickyNavLayout extends LinearLayout {
                 //mTop.getWindowVisibleDisplayFrame(mExpectTopRect);
                 //Logger.i(TAG, "onInterceptTouchEvent_getWindowVisibleDisplayFrame", "top: " + mExpectTopRect + ",top = " + getTop());
 
-                //if (Math.abs(dy) > mTouchSlop) {
-            /*	if(!mTop.getLocalVisibleRect(mExpectTopRect)){
-					return true;
-				}*/
-                if (dy > 0) {
-                    return getScrollY() == mTopViewHeight;
+                if (Math.abs(dy) > mTouchSlop) {
+                    if(mNeedIntercept){
+                        return true;
+                    }
+                    if (dy > 0) {
+                        return getScrollY() == mTopViewHeight;
+                    }
+                    if (mStickyDelegate != null && mStickyDelegate.shouldIntercept(this, dy,
+                            isTopHidden ? VIEW_STATE_HIDDLE : VIEW_STATE_SHOW)) {
+                        mDragging = true;
+                        return true;
+                    }
                 }
-                if (mStickyDelegate != null && mStickyDelegate.shouldIntercept(this, dy,
-                        isTopHidden ? VIEW_STATE_HIDDLE : VIEW_STATE_SHOW)) {
-                    mDragging = true;
-                    return true;
-                }
-                //}
 			/*getCurrentScrollView();
 			if (Math.abs(dy) > mTouchSlop) {
 				mDragging = true;
@@ -295,7 +292,8 @@ public class StickyNavLayout extends LinearLayout {
                          */
                         if (scrollY == mTopViewHeight) {
                             //分发给child
-                            return mStickyDelegate.dispatchTouchEventToChild(event);
+                            mStickyDelegate.offsetTopAndBottom(dy);
+                           // return mStickyDelegate.dispatchTouchEventToChild(event);
                         } else if (scrollY - dy > mTopViewHeight) {
                             scrollTo(getScrollX(), mTopViewHeight);
                         } else {
@@ -305,8 +303,8 @@ public class StickyNavLayout extends LinearLayout {
                         //手势向下
                         if (scrollY == 0) {
                             //分发事件给child
-                            //TODO
-                            return mStickyDelegate.dispatchTouchEventToChild(event);
+                            mStickyDelegate.offsetTopAndBottom(dy);
+                           // return mStickyDelegate.dispatchTouchEventToChild(event);
                         } else {
                             if (scrollY - dy < 0) {
                                 dy = scrollY;
@@ -348,7 +346,7 @@ public class StickyNavLayout extends LinearLayout {
 
     @Override //限定滑动的y范围
     public void scrollTo(int x, int y) {
-        Logger.i(TAG, "scrollTo", "x = " + x + ", y = " + y);
+       // Logger.i(TAG, "scrollTo", "x = " + x + ", y = " + y);
         if (y < 0) {
             y = 0;
         }
@@ -363,7 +361,7 @@ public class StickyNavLayout extends LinearLayout {
         }
         if (y != getScrollY()) {
             super.scrollTo(x, y);
-            System.out.println("y != getScrollY()");
+           // System.out.println("y != getScrollY()");
         }
         isTopHidden = getScrollY() == mTopViewHeight;
     }
@@ -390,6 +388,7 @@ public class StickyNavLayout extends LinearLayout {
 
         boolean dispatchTouchEventToChild(MotionEvent event);
 
+        void offsetTopAndBottom(int dy);
     }
 
     public static final int VIEW_STATE_SHOW = 1;

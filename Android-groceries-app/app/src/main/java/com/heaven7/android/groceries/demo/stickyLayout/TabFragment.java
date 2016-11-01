@@ -2,6 +2,7 @@ package com.heaven7.android.groceries.demo.stickyLayout;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -64,7 +65,13 @@ public class TabFragment extends Fragment implements StickyNavLayout.IStickyDele
         mListView.setAdapter(new QuickRecycleViewAdapter<Data>(R.layout.item, mDatas) {
             @Override
             protected void onBindData(Context context, int position, Data item, int itemLayoutId, ViewHelper helper) {
-                helper.setText(R.id.id_info, item.title);
+                helper.setText(R.id.id_info, item.title)
+                        .setRootOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Snackbar.make(v, R.string.action_settings, Snackbar.LENGTH_LONG).show();
+                            }
+                        });
             }
         });
         return view;
@@ -84,7 +91,7 @@ public class TabFragment extends Fragment implements StickyNavLayout.IStickyDele
         final int position = MainActivity.findFirstVisibleItemPosition(mListView);
         final View child = mListView.getChildAt(position);
         boolean isTopHidden = topViewState == StickyNavLayout.VIEW_STATE_HIDDLE;
-        if (!isTopHidden || (child != null && child.getTop() == 0 && isTopHidden && dy > 0)) {
+        if (!isTopHidden || (child != null && child.getTop() == 0 && dy > 0)) {
             //listview 滑动到顶部，并且要继续向下滑动时，拦截触摸
             return true;
         }
@@ -94,6 +101,11 @@ public class TabFragment extends Fragment implements StickyNavLayout.IStickyDele
     @Override
     public boolean dispatchTouchEventToChild(MotionEvent event) {
        return mListView.dispatchTouchEvent(event);
+    }
+
+    @Override
+    public void offsetTopAndBottom(int dy) {
+        mListView.scrollBy(0, -dy);
     }
 
     private static class Data extends BaseSelector {
